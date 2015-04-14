@@ -35,8 +35,8 @@ build a bunch of other useful modules I'm planning. Hope you like it.
 
 (def validator
   "A very quickly composed validator that roughly resembles the structure"
-  (comp tvmap? (tvkeys tvkey)
-        (tvvals (comp tvvec? (tv-map comp tvmap? (tv-zip tvint? tvint?))))))
+  (comp tvmap? (tv-keys tvkey?)
+        (tv-vals (comp tvvec? (tv-map comp tvmap? (tv-zip tvint? tvint?))))))
 ```
 
 ## Quality and support
