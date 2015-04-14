@@ -3,8 +3,8 @@
 Combinators for data processing
 
 This library combines two activities: validation and transformation (V and T).
-Since two letters is too short and I don't like long names. Handily there's
-prior art in this area:
+Since two letters is too short and I don't like long names, I needed something a
+bit longer than 'vt' or 'tv'. Handily there's prior art in this area:
 
 > The VT100 is a video terminal, introduced in August 1978 by Digital Equipment
 > Corporation (DEC). It was one of the first terminals to support ANSI escape
@@ -20,11 +20,12 @@ When it comes down to it, we only deal in data and code, and in lisp, code is da
 
 As part of the search for "how to make programming less tedious", I realised that I
 spend a lot of time validating and transforming data, so I combined them into one
-activity as an experiment.
-
-a convenient base upon which to build a bunch of other useful modules I'm planning.
+activity as an experiment and in doing so created a convenient base upon which to
+build a bunch of other useful modules I'm planning. Hope you like it.
 
 ## Usage
+
+[![Clojars Project](http://clojars.org/irresponsible/tv100/latest-version.svg)](http://clojars.org/irresponsible/tv100)
 
 ```clojure
 (ns myapp
