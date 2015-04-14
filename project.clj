@@ -1,4 +1,4 @@
-(defproject tv100 "0.1.0-SNAPSHOT"
+(defproject irresponsible/tv100 "0.1.0"
   :description "Transform and Validate data structures"
   :url "https://github.com/jjl/tv100/"
   :license {:name "MIT License"
