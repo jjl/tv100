@@ -241,6 +241,12 @@
 
 ;; ## Combiners
 
+(def tv-swap
+  "Swaps the value with the result of applying the given fn. Equivalent to identity.
+   Args: [tv-fn]
+   Returns: tv-fn"
+  identity)
+
 (defn tv-update
   "Returns a tv-fn of the provided tv-fn over update-in
    in path by calling tv-fn on it. Path pieces are a list of keys as you'd
@@ -303,6 +309,29 @@ o   Casts back to the original type of tv-fn
     (->> val tvmap?
          (map (fn [[k v]] [k (tv-fn v)]))
          (into {}))))
+
+(defn tv-slice
+  "Given a starting index, a count of items and a tv-fn, returns a tv that
+   accepts a sequence, applies the tv-fn to the range (one call) and merges
+   the resultinto the sequence in the same place and returns. Returned value
+   may be of a different size, in which case the returned value (now a vector)
+   will be of a different length to the one you started with.
+   Negative indices are treated as if zero
+   Args: [from count tv-fn]
+   Returns: tv-fn"
+  [from count tv-fn]
+  (fn [val]
+    (let [[pre r] (split-at from val)
+          [chunk r] (split-at (+ count -1; dec for right index
+                                 ; handle negative and zero start
+                                 (if (pos? from) from 1)) r)]
+      ; Force vector because in the case it's actually a sequence, it'll
+      ; result in the order being reversed because someone thought it was
+      ; a good idea for into to work fast rather than what I'd deem correctly
+      ; in any case, users almost certainly just want a thing they can map
+      (-> pre vec
+          (into (tv-fn chunk))
+          (into r)))))
 
 ;; ## Manufactured predicates
 

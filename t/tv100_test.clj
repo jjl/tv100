@@ -97,6 +97,9 @@
       ((v->tv "nilly" nil?) 123) => (throws ExceptionInfo "nilly"))))
 
 (facts :combiners
+  (fact :tv-swap
+    (tv-swap tvint?) => fn?
+    ((tv-swap tvint?) 123) => 123)
   (fact :tv-update
     ((tv-update twice :foo) {:foo 2}) => {:foo 4})
   (fact :tv-or
@@ -137,6 +140,18 @@
         f => fn?)
       (fact "transforms"
         (f {2 4}) => {2 8})))
+  (fact :tv-slice
+    (let [f (tv-slice 1 2 (partial map (partial * 2)))
+          f2 (tv-slice -1 2 (partial map (partial * 2)))
+          f3 (tv-slice 0 2 (partial map (partial * 2)))]
+      (fact "returns function"
+        f => fn?)
+      (fact "transforms"
+        (f [1 2 3 4 5]) => [1 4 6 4 5])
+      (fact "negative start = 0"
+        (f2 [1 2 3 4 5]) => [2 4 3 4 5])
+      (fact "0"
+        (f3 [1 2 3 4 5]) => [2 4 3 4 5])))
   (fact :tv-count?
     (let [f1 (tv-count? 1)
           f2 (tv-count? 1 2)]
