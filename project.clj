@@ -20,7 +20,7 @@
                   ["vcs" "tag"]
                   ["deploy"]]
   :dependencies [[org.clojure/clojure "1.7.0"]
-                 [org.clojure/clojurescript "1.7.48"]]
+                 [org.clojure/clojurescript "1.7.48" :scope :provided]]
   :cljsbuild {:builds [{:source-paths ["src"]
                         :compiler {:output-to "tv100-0.2.0.min.js"
                                    :optimizations :advanced
