@@ -1,6 +1,6 @@
-(ns tv100-test
+(ns tv100.core-test
   (:use [midje.sweet]
-        [tv100]
+        [tv100.core]
         [tv100.util])
   (:import [clojure.lang ExceptionInfo]))
 
@@ -77,8 +77,17 @@
       (fact :tvclass?
         (tf tvclass? [::fail ::fail ::fail ::fail ::fail ::fail ::fail ::fail])
         (tvclass? ExceptionInfo) => ExceptionInfo
-        (tvclass? nil) => (throws ExceptionInfo "Expected class")))))
-
+        (tvclass? nil) => (throws ExceptionInfo "Expected class"))
+      (fact :tv-isa?
+        (fact "class"
+          ((tv-isa? java.lang.Long) 123) => true)
+        (fact "object"
+          ((tv-isa? 456) 123) => true))
+      (fact :tv-instance?
+        (fact "class"
+          ((tv-instance? java.lang.Long) 123) => true)
+        (fact "object"
+          ((tv-instance? 456) 123) => true)))))
 
 (facts :convertors
   (facts :t->tv
@@ -95,6 +104,13 @@
       ((v->tv "nilly" nil?) nil) => nil
       ((v->tv "int" integer?) 123) => 123
       ((v->tv "nilly" nil?) 123) => (throws ExceptionInfo "nilly"))))
+
+; Use cases:
+; - Actually filter the results
+; - Filter them for purposes of applying extra checks
+; 
+; (tv-filter tv-fn)
+; (tv-with-matching tv-fn)
 
 (facts :combiners
   (fact :tv-swap
@@ -168,6 +184,3 @@
         => (throws ExceptionInfo "collection of length between 1 and 2 (inclusive)")
         (f2 [:a :b :c]) =>
         (throws ExceptionInfo "collection of length between 1 and 2 (inclusive)")))))
-  ;; TODO: coming soon
-  ;; (fact :tv-isa?)
-  ;; (fact :tv-instance?))

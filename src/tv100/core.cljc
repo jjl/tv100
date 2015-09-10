@@ -1,7 +1,6 @@
-(ns tv100
-  (:use [tv100.util :refer [safely safely-or]]
-        [collectible :as c]))
-
+(ns tv100.core
+  #?(:clj  (:require [tv100.util :refer [safely safely-or]])
+     :cljs (:require-macros [tv100.util :refer [safely safely-or]])))
 
 ;; # tv100
 ;;
@@ -181,7 +180,7 @@
    Args: [val]
    Return: val
    Throws: ExceptionInfo if not a float"
-  (v->tv "Expected float" float?))
+  (v->tv "Expected float" #?(:clj float? :cljs number?)))
 
 (def tvkey?
   "A tv-fn that expects and returns a keyword.
@@ -232,12 +231,32 @@
    Throws: ExceptionInfo if not falsey"
   (v->tv "Expected record" record?))
 
-(def tvclass?
+#?(:clj (def tvclass?
   "A tv-fn that expects and returns a Class object.
    Args: [val]
    Return: val
    Throws: ExceptionInfo if not a Class object"
-  (v->tv "Expected class" class?))
+  (v->tv "Expected class" class?)))
+
+(defn tv-isa?
+  "Returns a tv-fn that does an isa? check against the given object/class
+   Args: [parent]
+   Returns: tv-fn"
+  [parent]
+  (let [c #?(:clj (if (class? parent) parent (class parent))
+             :cljs parent)]
+    (t->tv (str "isa? " c)
+           #(isa? #?(:clj (if (class? %) % (class %)) :cljs %) c))))
+
+(defn tv-instance?
+  "Returns a tv-fn that does an instance? check against the given object/class
+   Args: [class]
+   Returns: tv-fn"
+  [c]
+  (let [c #?(:clj (if (class? c) c (class c))
+             :cljs c)]
+    (t->tv (str "instance of " c)
+           #(instance? c %))))
 
 ;; ## Combiners
 
@@ -358,22 +377,7 @@ o   Casts back to the original type of tv-fn
    Returns: tv-fn"
   ([cnt]
      (v->tv (str "collection of length " cnt)
-            (partial c/count= cnt)))
+            #(= (count %) cnt)))
   ([low high]
      (v->tv (str "collection of length between " low " and " high " (inclusive)")
-            (partial c/count<= low high))))
-
-;; Coming next release: more functions.
-;; (defn tv-isa?
-;;   "Returns a tv-fn that does an isa? check against the given object
-;;    Args: [parent]
-;;    Returns: tv-fn"
-;;   [parent]
-;;   (t->tv #(isa? (if (class? %) % (class %)) parent)))
-
-;; (defn tv-instance?
-;;   "Returns a tv-fn that does an instance? check against the given class
-;;    Args: [class]
-;;    Returns: tv-fn"
-;;   [c]
-;;   (t->tv #(instance? % (if (class? c) c (class c)))))
+            #(<= low (count %) high))))
