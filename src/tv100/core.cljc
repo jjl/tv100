@@ -13,6 +13,28 @@
 ;; to make it easier was to combine transformation and validation and provide
 ;; combinators for these transform-validate functions (tv-fns)
 ;;
+;; You can think of it as like a parser library but for data instead of text
+;; or as a library that glues things together or as a boilerplate removal tool
+;; Here are some example uses:
+;; - Validating data (e.g. edn/json config files)
+;; - Transforming a tree of data and bailing out if it's misshapen
+;; - A form of glue for sticking code together
+;;
+;; Examples of real-world use:
+;;
+;; [oolong](https://github.com/irresponsible/oolong)
+;; :   
+;; ## Definitions
+;; 
+;; tv function
+;;  : a function which returns a (possibly modified) value or throws
+;; constructor
+;;  : a function of one argument which either returns a value or nil on bad input
+;; predicate
+;;  : a function that tests a value and returns either a value or nil on bad input
+;; t function
+;;  : like a predicate, but false is also a valid bad input response
+;;
 ;; ## Diving in
 ;;
 ;; ```clojure
@@ -20,33 +42,24 @@
 ;;  (:use [tv100])
 ;;
 ;; (defn double-int
-;;  "An example tv-fn"
+;;  "Our very own tv function, written manually.
+;;   Args: [val]
+;;   Returns: If val is an integer, val*2 else throws an exception"
 ;;  [val]
 ;;  (if (integer? val)
 ;;   (* val 2)
 ;;   (throw (ex-info "Not an integer" {:got val})))))
 ;;
-;; (def halve-int
-;;  "An example of using v->tv, which takes a predicate and either returns
-;;   the value or throws"
-;;  (comp (v->tv "Not an integer? integer?) (partial * 2)))
+;; (def double-int-2
+;;  "Here we use our first library function to make the code shorter
+;;   Args: [val]
+;;   Returns: If val is an integer, val*2 else throws an exception"
+;;  (comp (pred->tv "Not an integer!" integer?) (partial * 2)))
 ;;
-;; (def halve-int2
+;; (def double-int-3
 ;;  "How i might actually write it, using the builtin tvint?"
-;;  (comp (partial * 2) tvint))
+;;  (comp tvint? (partial * 2)))
 ;; ```
-;;
-;; ## Definitions
-;; 
-;; tv-fn
-;; : a function which transforms a value and is expected to throw if the
-;;   provided value is malformed
-;;
-;; t-fn
-;; : a function which transforms a value
-;;
-;; v-fn:
-;; : a (logical boolean) predicate. converts a value to a truthy/falsey
 ;;
 ;; ## The name
 ;;
@@ -67,10 +80,21 @@
 ;;
 ;; There are several different function name formats in use in this library:
 ;; - simple `[a-z+]` : simple functions. e.g. const
-;; - tv predicates `tv[a-z]+\?`: simple predicates as tv-fns
-;; - convertors `[a-z]+->[a-z]+` : takes a function, returns a function. e.g. t->tv
+;; - tv predicates `tv[a-z]+\?`: tv-fns that perform tests and return the value unmodified
+;;                               or else throw an exception
+;; - convertors `[a-z]+->[a-z]+` : take a function, return a function. e.g. pred->tv
 ;; - combiners `tv-[a-z]+` : takes tv-fns, returns a tv-fn
-;; - manufactured predicates `tv-[a-z]+\?` : takes args, returns a tv-fn
+;; - utility `tv-[a-z]+\?` : t
+;;
+;; CLJS Support
+;;
+;; From v 0.4.0 we aim to support cljs using clojure 1.7 or later's cljc facility
+;;
+;; The following funcitons are clojure only:
+;;
+;; tvint?    Javascript doesn't (yet) have integers in most places
+;; tvclass?  Javascript doesn't have 
+
 
 ;; ## Basic functions
 
@@ -90,28 +114,45 @@
 
 ;; ## Convertors
 
-(defn t->tv
-  "Turns a t-fn into a tv-fn. If t returns a truthy value,
+(defn cons->tv
+  "Turns a constructor into a tv-fn. If constructor returns a non-nil value,
    return it, else throw with exp-desc as the message
-   Args: [exp-desc t-fn]
+   Args: [exp-desc constructor-fn]
    Returns: tv-fn"
-  [exp-desc t-f]
+  [exp-desc c-fn]
   (fn [val]
-    (or (t-f val)
-        (fail exp-desc val))))
+    (let [r (c-fn val)]
+      (if (nil? r)
+        (fail exp-desc val)
+        r))))
 
-(defn v->tv
-  "Turns a v-fn a tv-fn. If it returns truthy, return
+(defn pred->tv
+  "Turns a predicate into a tv-fn. If it returns truthy, return
    the val unmodified, else throw with exp-desc as the message
-   Args: [exp-desc pred]
-   Returns: v-fn"
-  [exp-desc v-f]
+   Args: [exp-desc pred-fn]
+   Returns: tv-fn"
+  [exp-desc pred-fn]
   (fn [val]
-    (if (v-f val)
+    (if (pred-fn val)
       val
       (fail exp-desc val))))
 
-;; ## tv predicates
+
+(defn t->tv
+  "Turns a t function into a tv-fn. If constructor returns a truthy value,
+   return it, else throw with exp-desc as the message
+   Args: [exp-desc constructor-fn]
+   Returns: tv-fn"
+  [exp-desc pred-fn]
+  (fn [val]
+    (or (pred-fn val)
+        (fail exp-desc val))))
+
+;; This got renamed in v 4.0 because i think the old name was confusing
+      
+(def v->tv pred->tv)
+
+;; ## tv functions
 
 (def tvany?
   "A tv-fn that accepts and returns anything. equivalent to identity
@@ -161,12 +202,13 @@
    Throws: ExceptionInfo if not a bool"
   (v->tv "Expected boolean" #{true false}))
 
-(def tvint?
-  "A tv-fn that expects and returns an integer.
-   Args: [val]
-   Return: val
-   Throws: ExceptionInfo if not an int"
-  (v->tv "Expected int" integer?))
+;; sorry cljs users, javascript doesn't have ints
+#?(:clj (def tvint?
+         "A tv-fn that expects and returns an integer.
+          Args: [val]
+          Return: val
+          Throws: ExceptionInfo if not an int"
+         (v->tv "Expected int" integer?)))
 
 (def tvstr?
   "A tv-fn that expects and returns a string.

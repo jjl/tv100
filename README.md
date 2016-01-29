@@ -39,6 +39,13 @@ build a bunch of other useful modules I'm planning. Hope you like it.
         (tv-vals (comp tvvec? (tv-map comp tvmap? (tv-zip tvint? tvint?))))))
 ```
 
+## Docs
+
+Because of the terrible state of doc tools for boot, you have to use leiningen,
+which you almost certainly have installed anyway. I'm trying to sort this out, sorry.
+
+Generate with 'lein doc', read at doc/index.html
+
 ## Quality and support
 
 * I'll try not to break the API.
@@ -48,13 +55,9 @@ build a bunch of other useful modules I'm planning. Hope you like it.
 If you have any issues, please open an issue on github. If you have any patches,
 (including doc patches!), please open a pull request.
 
-## Docs
-
-Generate with 'lein doc', read at doc/index.html
-
 ## Tests
 
-Run with 'lein midje'
+Run with 'boot midje'
 
 ## TODO
 
