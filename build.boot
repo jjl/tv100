@@ -1,43 +1,49 @@
-(def project 'irresponsible/tv100)
-(def version "0.2.0")
-(def description "Utilities for transforming and validating data")
-
 (set-env!
-  :source-paths #{"src"}
-  :dependencies '[[org.clojure/clojure "1.7.0"          :scope "provided"]
-                  [org.clojure/clojurescript "1.7.228"  :scope "test"]
-                  [midje "1.8.3"                        :scope "test"]
-                  [adzerk/boot-cljs "1.7.228-1"         :scope "test"]
-                  [boot-deps "0.1.6"]])
+ :project 'irresponsible/tv100
+ :version "0.3.0-SNAPSHOT"
+ :source-paths #{"src"}
+ :dependencies '[[org.clojure/clojure "1.8.0"                  :scope "provided"]
+                 [org.clojure/clojurescript "1.7.228"          :scope "test"]
+                 [adzerk/boot-cljs "1.7.228-1"                 :scope "test"]
+                 [adzerk/boot-test "1.1.0"                     :scope "test"]
+                 [crisptrutski/boot-cljs-test "0.2.2-SNAPSHOT" :scope "test"]])
 
 (require '[adzerk.boot-cljs :refer [cljs]]
-         '[midje.repl :as m]
-         '[boot-deps :refer [ancient latest]])
-    
+         '[adzerk.boot-test :as t]
+         '[crisptrutski.boot-cljs-test :refer [test-cljs]])
+
 (task-options!
-  pom {:project project
-       :version version
-       :license {"MIT" "https://en.wikipedia.org/wiki/MIT_License"}})
-;  midje {:test-paths #{"t"}})
+ pom {:project (get-env :project)
+      :version (get-env :version)
+      :description "Utilities for transforming and validating data"
+      :url "https://github.com/irresponsible/tv100"
+      :scm {:url "https://github.com/irresponsible/tv100.git"}
+      :license {"MIT" "https://en.wikipedia.org/MIT_License"}}
+ test-cljs {:js-env :node}
+ target  {:dir #{"target"}})
 
-(deftask uberjar []
-  (comp (uber) (jar)))
+(deftask clj-tests []
+  (set-env! :source-paths #(conj % "test"))
+  (comp (speak) (t/test)))
 
-(deftask local []
-  (comp (jar) (install)))
+(deftask cljs-tests []
+  (set-env! :source-paths #(conj % "test"))
+  (comp (speak) (test-cljs)))
 
-(deftask testing []
-  (set-env! :source-paths #(conj % "t"))
-  identity)
+(deftask tests []
+  (set-env! :source-paths #(conj % "test"))
+  (comp (speak) (t/test) (test-cljs)))
 
-(deftask run-midje []
-  (m/load-facts))
+(deftask autotest-clj []
+  (set-env! :source-paths #(conj % "test"))
+  (comp (watch) (speak) (t/test)))
 
-(deftask midje []
-  (comp (testing) (run-midje)))
-  
-(deftask dev []
-  identity)
+(deftask autotest-cljs []
+  (set-env! :source-paths #(conj % "test"))
+  (comp (watch) (speak) (test-cljs)))
 
-(deftask release []
-  identity)
+(deftask autotest []
+  (comp (watch) (tests)))
+
+(deftask make-release-jar []
+  (comp (pom) (uber) (jar)))

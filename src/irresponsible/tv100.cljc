@@ -1,6 +1,4 @@
-(ns tv100.core
-  #?(:clj  (:require [tv100.util :refer [safely safely-or]])
-     :cljs (:require-macros [tv100.util :refer [safely safely-or]])))
+(ns irresponsible.tv100)
 
 ;; # tv100
 ;;
@@ -88,12 +86,12 @@
 ;;
 ;; CLJS Support
 ;;
-;; From v 0.4.0 we aim to support cljs using clojure 1.7 or later's cljc facility
+;; From 0.2.0 onwards we aim to support cljs using clojure 1.7 or later's cljc facility
 ;;
 ;; The following funcitons are clojure only:
 ;;
 ;; tvint?    Javascript doesn't (yet) have integers in most places
-;; tvclass?  Javascript doesn't have 
+;; tvclass?  Javascript doesn't have classes
 
 
 ;; ## Basic functions
@@ -137,6 +135,8 @@
       val
       (fail exp-desc val))))
 
+;; This got renamed in v 0.3.0 because i think the old name was confusing
+(def v->tv pred->tv)
 
 (defn t->tv
   "Turns a t function into a tv-fn. If constructor returns a truthy value,
@@ -148,9 +148,6 @@
     (or (pred-fn val)
         (fail exp-desc val))))
 
-;; This got renamed in v 4.0 because i think the old name was confusing
-      
-(def v->tv pred->tv)
 
 ;; ## tv functions
 
@@ -165,42 +162,42 @@
    Args: [val]
    Return: val
    Throws: ExceptionInfo if not truthy"
-  (v->tv "Expected truthy" identity))
+  (pred->tv "Expected truthy" identity))
 
 (def tvfalsey?
   "A tv-fn that expects and returns anything falsey.
    Args: [val]
    Return: val
    Throws: ExceptionInfo if not falsey"
-  (v->tv "Expected falsey" not))
+  (pred->tv "Expected falsey" not))
 
 (def tvnil?
   "A tv-fn that expects and returns nil.
    Args: [val]
    Return: val
    Throws: ExceptionInfo if not nil"
-  (v->tv "Expected nil" nil?))
+  (pred->tv "Expected nil" nil?))
 
 (def tvtrue?
   "A tv-fn that expects and returns true.
    Args: [val]
    Return: val
    Throws: ExceptionInfo if not true"
-  (v->tv "Expected true" true?))
+  (pred->tv "Expected true" true?))
 
 (def tvfalse?
   "A tv-fn that expects and returns false.
    Args: [val]
    Return: val
    Throws: ExceptionInfo if not false"
-  (v->tv "Expected false" false?))
+  (pred->tv "Expected false" false?))
 
 (def tvbool?
   "A tv-fn that expects and returns a boolean.
    Args: [val]
    Return: val
    Throws: ExceptionInfo if not a bool"
-  (v->tv "Expected boolean" #{true false}))
+  (pred->tv "Expected boolean" (partial contains? #{true false})))
 
 ;; sorry cljs users, javascript doesn't have ints
 #?(:clj (def tvint?
@@ -208,97 +205,98 @@
           Args: [val]
           Return: val
           Throws: ExceptionInfo if not an int"
-         (v->tv "Expected int" integer?)))
+         (pred->tv "Expected int" integer?)))
 
 (def tvstr?
   "A tv-fn that expects and returns a string.
    Args: [val]
    Return: val
    Throws: ExceptionInfo if not a string"
-  (v->tv "Expected string" string?))
+  (pred->tv "Expected string" string?))
 
 (def tvfloat?
   "A tv-fn that expects and returns a float.
    Args: [val]
    Return: val
    Throws: ExceptionInfo if not a float"
-  (v->tv "Expected float" #?(:clj float? :cljs number?)))
+  (pred->tv "Expected float" #?(:clj float? :cljs number?)))
 
 (def tvkey?
   "A tv-fn that expects and returns a keyword.
    Args: [val]
    Return: val
    Throws: ExceptionInfo if not a keyword"
-  (v->tv "Expected keyword" keyword?))
+  (pred->tv "Expected keyword" keyword?))
 
 (def tvsym?
   "A tv-fn that expects and returns a symbol.
    Args: [val]
    Return: val
    Throws: ExceptionInfo if not a symbol"
-  (v->tv "Expected symbol" symbol?))
+  (pred->tv "Expected symbol" symbol?))
 
 (def tvfn?
   "A tv-fn that expects and returns a function.
    Args: [val]
    Return: val
    Throws: ExceptionInfo if not a function"
-  (v->tv "Expected function" fn?))
+  (pred->tv "Expected function" fn?))
 
 (def tvlist?
   "A tv-fn that expects and returns a list.
    Args: [val]
    Return: val
    Throws: ExceptionInfo if not a list"
-  (v->tv "Expected list" list?))
+  (pred->tv "Expected list" list?))
 
 (def tvvec?
   "A tv-fn that expects and returns a vector.
    Args: [val]
    Return: val
    Throws: ExceptionInfo if not a vector"
-  (v->tv "Expected vector" vector?))
+  (pred->tv "Expected vector" vector?))
 
 (def tvmap?
   "A tv-fn that expects and returns a map.
    Args: [val]
    Return: val
    Throws: ExceptionInfo if not a map"
-  (v->tv "Expected map" map?))
+  (pred->tv "Expected map" map?))
 
 (def tvrecord?
   "A tv-fn that expects and returns a record.
    Args: [val]
    Return: val
    Throws: ExceptionInfo if not falsey"
-  (v->tv "Expected record" record?))
+  (pred->tv "Expected record" record?))
 
 #?(:clj (def tvclass?
-  "A tv-fn that expects and returns a Class object.
+  "[clojure only]
+   A tv-fn that expects and returns a Class object.
    Args: [val]
    Return: val
    Throws: ExceptionInfo if not a Class object"
-  (v->tv "Expected class" class?)))
+  (pred->tv "Expected class" class?)))
 
-(defn tv-isa?
-  "Returns a tv-fn that does an isa? check against the given object/class
+#?(:clj (defn tv-isa?
+  "[clojure only]
+   Returns a tv-fn that does an isa? check against the given object/class
    Args: [parent]
    Returns: tv-fn"
   [parent]
-  (let [c #?(:clj (if (class? parent) parent (class parent))
-             :cljs parent)]
-    (t->tv (str "isa? " c)
-           #(isa? #?(:clj (if (class? %) % (class %)) :cljs %) c))))
+  (let [p (if (class? parent) parent (class parent))]
+    (pred->tv (str "isa? " p)
+              #(isa? (if (class? %) % (class %)) p)))))
 
-(defn tv-instance?
-  "Returns a tv-fn that does an instance? check against the given object/class
+#?(:clj (defn tv-instance?
+  "[clojure only]
+   Returns a tv-fn that does an instance? check against the given object/class
    Args: [class]
    Returns: tv-fn"
   [c]
-  (let [c #?(:clj (if (class? c) c (class c))
-             :cljs c)]
-    (t->tv (str "instance of " c)
-           #(instance? c %))))
+  (let [c (if (class? c) c (class c))]
+    (pred->tv (str "instance of " c)
+              #(instance? c %)))))
 
 ;; ## Combiners
 
@@ -327,7 +325,10 @@
   (fn [val]
     ;; This could be shorter, except nil must be a valid value
     (let [rs (->> tv-fns
-                  (map #(safely-or ::fail (% val)))
+                  (map #(try
+                          (% val)
+                          (catch #?(:clj clojure.lang.ExceptionInfo :cljs cljs.core.ExceptionInfo) e
+                            ::fail)))
                   (filter (partial not= ::fail)))]
       (if (seq rs)
         (first rs)
@@ -335,7 +336,7 @@
 
 (defn tv-map
   "Returns a tv-fn that returns the value transformed by mapping tv-fn over it
-o   Casts back to the original type of tv-fn
+   Casts back to the original type of tv-fn
    Args: [tv-fn]
    Returns: tv-fn"
   [tv-fn]
@@ -401,16 +402,16 @@ o   Casts back to the original type of tv-fn
    Args: [exp]
    Returns: tv-fn"
   [exp]
-  (v->tv (str "Expected " exp) (partial = exp)))
+  (pred->tv (str "Expected " exp) (partial = exp)))
 
 (defn tv<=?
   "Returns a tv-fn that does a less-than-or-equals comparison with exp or low and high
    Args: [exp] [low high]
    Returns: tv-fn"
   ([exp]
-     (v->tv (str "Expected " exp) (partial <= exp)))
+     (pred->tv (str "Expected " exp) (partial <= exp)))
   ([low high]
-     (v->tv (str "Expected number between " low " and " high) #(<= low % high))))
+     (pred->tv (str "Expected number between " low " and " high) #(<= low % high))))
 
 (defn tv-count?
   "Returns a tv-fn that counts the provided collection and expects it to be either
@@ -418,8 +419,8 @@ o   Casts back to the original type of tv-fn
    Args: [cnt] [low high]
    Returns: tv-fn"
   ([cnt]
-     (v->tv (str "collection of length " cnt)
+     (pred->tv (str "collection of length " cnt)
             #(= (count %) cnt)))
   ([low high]
-     (v->tv (str "collection of length between " low " and " high " (inclusive)")
+     (pred->tv (str "collection of length between " low " and " high " (inclusive)")
             #(<= low (count %) high))))

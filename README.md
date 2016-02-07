@@ -11,6 +11,10 @@ bit longer than 'vt' or 'tv'. Handily there's prior art in this area:
 > codes for cursor control and other tasks, and added a number of extended codes
 > for special features like controlling the LED lamps on the keyboard.
 
+![logo](https://github.com/irresponsible/tv100/raw/master/logo.png)
+
+Logo courtesy of [openclipart](https://openclipart.org/detail/21303/old-television)
+
 It amused me holding up the VT100 as an example of something worthy of naming
 a library after, so here it is.
 
@@ -57,7 +61,9 @@ If you have any issues, please open an issue on github. If you have any patches,
 
 ## Tests
 
-Run with 'boot midje'
+    $ boot repl
+    ...
+    > 
 
 ## TODO
 
