@@ -93,7 +93,6 @@
 ;; tvint?    Javascript doesn't (yet) have integers in most places
 ;; tvclass?  Javascript doesn't have classes
 
-
 ;; ## Basic functions
 
 (def const
@@ -119,7 +118,9 @@
    Returns: tv-fn"
   [exp-desc c-fn]
   (fn [val]
-    (let [r (c-fn val)]
+    (let [r (try (c-fn val)
+                 (catch #?(:clj java.lang.Exception :cljs js/Object) e
+               nil))]
       (if (nil? r)
         (fail exp-desc val)
         r))))
@@ -131,7 +132,9 @@
    Returns: tv-fn"
   [exp-desc pred-fn]
   (fn [val]
-    (if (pred-fn val)
+    (if (try (pred-fn val)
+             (catch #?(:clj java.lang.Exception :cljs js/Object) e
+               nil))
       val
       (fail exp-desc val))))
 
