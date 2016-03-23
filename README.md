@@ -35,7 +35,7 @@ build a bunch of other useful modules I'm planning. Hope you like it.
 
 ```clojure
 (ns myapp
-  (:use [tv100]))
+  (:use [irresponsible.tv100]))
 
 (def my-data-structure {:foo [{1 2}]})
 
@@ -47,7 +47,7 @@ build a bunch of other useful modules I'm planning. Hope you like it.
 
 ## Clojurescript support
 
-Just works!
+Just works! Obviously you have to :require rather than :use as in the example.
 
 The following functions are currently unimplemented:
 
