@@ -24,6 +24,7 @@
  target  {:dir #{"target"}})
 
 (deftask testing []
+  (set-env! :resource-paths #(conj % "test"))
   (set-env! :source-paths #(conj % "test")))
   
 (deftask test-clj []
