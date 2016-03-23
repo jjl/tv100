@@ -1,3 +1,5 @@
+The irresponsible clojure guild present...
+
 # tv100
 
 Combinators for data processing
@@ -43,40 +45,28 @@ build a bunch of other useful modules I'm planning. Hope you like it.
         (tv-vals (comp tvvec? (tv-map comp tvmap? (tv-zip tvint? tvint?))))))
 ```
 
+## Clojurescript support
+
+Just works!
+
+The following functions are currently unimplemented:
+
+* tvint? (try tvfloat?, i haven't figured out what to do about ES6 ints yet)
+* tvclass? (javascript doesn't have a special 'class' type)
+* tv-isa? (because it almost certainly wouldn't do what you want it to)
+* tv-instance? (because i haven't written it yet)
+
 ## Docs
 
-Because of the terrible state of doc tools for boot, you have to use leiningen,
-which you almost certainly have installed anyway. I'm trying to sort this out, sorry.
+Sorry, just inline at the minute, but they're good quality.
 
-Generate with 'lein doc', read at doc/index.html
-
-## Quality and support
-
-* I'll try not to break the API.
-* I believe in both tests and documentation and try to make them both good.
-* The project is considered supported as I use it for several others.
+## Contributing
 
 If you have any issues, please open an issue on github. If you have any patches,
-(including doc patches!), please open a pull request.
-
-## Tests
-
-    $ boot repl
-    ...
-    > 
-
-## TODO
-
-* Figure out how to collect multiple errors
-* Report line/col numbers:
- * Take an optional metadata map structure with line/col numbers
- * Make tools.reader spit out separate metadata structure we can use with the above
-* More predicates and combiners
-* Realisation tests in the test suite (check tv-or doesn't, tv-map does etc.)
-** Note that I *think* these work currently. They *appear* to at least.
+(including doc patches!), please open a pull request or an issue.
 
 ## License
 
-Copyright © 2015 James Laver
+Copyright © 2016 James Laver
 
 Distributed under the MIT License (see LICENSE in this repository)

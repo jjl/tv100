@@ -1,17 +1,17 @@
 (set-env!
  :project 'irresponsible/tv100
- :version "0.3.0-SNAPSHOT"
+ :version "0.2.0"
  :source-paths #{"src"}
  :resource-paths #{"src"}
- :dependencies '[[org.clojure/clojure "1.8.0"                  :scope "provided"]
-                 [org.clojure/clojurescript "1.7.228"          :scope "test"]
-                 [adzerk/boot-cljs "1.7.228-1"                 :scope "test"]
-                 [adzerk/boot-test "1.1.0"                     :scope "test"]
+ :dependencies '[[org.clojure/clojure          "1.8.0"         :scope "provided"]
+                 [org.clojure/clojurescript    "1.7.228"       :scope "test"]
+                 [adzerk/boot-cljs             "1.7.228-1"     :scope "test"]
+                 [adzerk/boot-test             "1.1.0"         :scope "test"]
                  [crisptrutski/boot-cljs-test "0.2.2-SNAPSHOT" :scope "test"]])
 
 (require '[adzerk.boot-cljs :refer [cljs]]
-         '[adzerk.boot-test :as t]
-         '[crisptrutski.boot-cljs-test :refer [test-cljs]])
+         '[adzerk.boot-test :as boot-test]
+         '[crisptrutski.boot-cljs-test :as boot-cljs-test])
 
 (task-options!
  pom {:project (get-env :project)
@@ -20,31 +20,31 @@
       :url "https://github.com/irresponsible/tv100"
       :scm {:url "https://github.com/irresponsible/tv100.git"}
       :license {"MIT" "https://en.wikipedia.org/MIT_License"}}
- test-cljs {:js-env :node}
+ boot-cljs-test/test-cljs {:js-env :node}
  target  {:dir #{"target"}})
 
-(deftask clj-tests []
+(deftask test-clj []
   (set-env! :source-paths #(conj % "test"))
-  (comp (speak) (t/test)))
+  (comp (speak) (boot-test/test)))
 
-(deftask cljs-tests []
+(deftask test-cljs []
   (set-env! :source-paths #(conj % "test"))
-  (comp (speak) (test-cljs)))
+  (comp (speak) (boot-cljs-test/test-cljs)))
 
-(deftask tests []
+(deftask test []
   (set-env! :source-paths #(conj % "test"))
-  (comp (speak) (t/test) (test-cljs)))
+  (comp (speak) (boot-test/test) (boot-cljs-test/test-cljs)))
 
 (deftask autotest-clj []
   (set-env! :source-paths #(conj % "test"))
-  (comp (watch) (speak) (t/test)))
+  (comp (watch) (speak) (boot-test/test)))
 
 (deftask autotest-cljs []
   (set-env! :source-paths #(conj % "test"))
-  (comp (watch) (speak) (test-cljs)))
+  (comp (watch) (speak) (boot-cljs-test/test-cljs)))
 
 (deftask autotest []
-  (comp (watch) (tests)))
+  (comp (watch) (test)))
 
-(deftask make-release-jar []
-  (comp (pom) (uber) (jar)))
+(deftask make-jar []
+  (comp (target) (pom) (jar)))

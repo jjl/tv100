@@ -1,4 +1,4 @@
-(ns tv100.core-test
+(ns irresponsible.tv100-test
   #?@(:clj [(:require [clojure.test :refer [deftest is]]
                       [irresponsible.tv100 :as t])
             (:import [clojure.lang ExceptionInfo])]

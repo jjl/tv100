@@ -120,7 +120,7 @@
   (fn [val]
     (let [r (try (c-fn val)
                  (catch #?(:clj java.lang.Exception :cljs js/Object) e
-               nil))]
+                   nil))]
       (if (nil? r)
         (fail exp-desc val)
         r))))

@@ -10,3 +10,4 @@ pom.xml.asc
 /.nrepl-history
 /tv100*js
 .#*
+.DS_Store
