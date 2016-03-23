@@ -1,6 +1,6 @@
 language: clojure
 sudo: false
-script: ./boot test
+script: ./boot travis
 branches:
   only:
     - master

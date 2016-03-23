@@ -23,24 +23,27 @@
  boot-cljs-test/test-cljs {:js-env :node}
  target  {:dir #{"target"}})
 
+(deftask testing []
+  (set-env! :source-paths #(conj % "test")))
+  
 (deftask test-clj []
-  (set-env! :source-paths #(conj % "test"))
+  (testing)
   (comp (speak) (boot-test/test)))
 
 (deftask test-cljs []
-  (set-env! :source-paths #(conj % "test"))
+  (testing)
   (comp (speak) (boot-cljs-test/test-cljs)))
 
 (deftask test []
-  (set-env! :source-paths #(conj % "test"))
+  (testing)
   (comp (speak) (boot-test/test) (boot-cljs-test/test-cljs)))
 
 (deftask autotest-clj []
-  (set-env! :source-paths #(conj % "test"))
+  (testing)
   (comp (watch) (speak) (boot-test/test)))
 
 (deftask autotest-cljs []
-  (set-env! :source-paths #(conj % "test"))
+  (testing)
   (comp (watch) (speak) (boot-cljs-test/test-cljs)))
 
 (deftask autotest []
@@ -48,3 +51,7 @@
 
 (deftask make-jar []
   (comp (target) (pom) (jar)))
+
+(deftask travis []
+  (testing)
+  (comp (boot-test/test) (boot-cljs-test/test-cljs)))
