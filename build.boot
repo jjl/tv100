@@ -22,6 +22,12 @@
       :license {"MIT" "https://en.wikipedia.org/MIT_License"}}
  ;; marginalia {:dir "doc"
  ;;             :file "index.html"}
+  push {:tag            true
+        :ensure-branch  "master"
+        :ensure-release true
+        :ensure-clean   true
+        :gpg-sign       true
+        :repo-map [["clojars" {:url "https://clojars.org/repo/"}]]}
  boot-cljs-test/test-cljs {:js-env :node}
  target  {:dir #{"target"}})
 
