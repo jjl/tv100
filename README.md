@@ -13,7 +13,7 @@ bit longer than 'vt' or 'tv'. Handily there's prior art in this area:
 > codes for cursor control and other tasks, and added a number of extended codes
 > for special features like controlling the LED lamps on the keyboard.
 
-![logo](https://github.com/irresponsible/tv100/blob/master/logo.png)
+![logo](https://irresponsible.github.io/media/tv100/logo.png)
 
 Logo courtesy of [openclipart](https://openclipart.org/detail/21303/old-television)
 
