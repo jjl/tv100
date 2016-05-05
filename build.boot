@@ -41,11 +41,11 @@
 
 (deftask test-clj []
   (testing)
-  (comp (boot-test/test)))
+  (boot-test/test))
 
 (deftask test-cljs []
   (testing)
-  (comp (boot-cljs-test/test-cljs)))
+  (boot-cljs-test/test-cljs))
 
 (deftask test []
   (testing)
