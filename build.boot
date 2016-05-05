@@ -37,23 +37,23 @@
   
 (deftask test-clj []
   (testing)
-  (comp (speak) (boot-test/test)))
+  (comp (boot-test/test)))
 
 (deftask test-cljs []
   (testing)
-  (comp (speak) (boot-cljs-test/test-cljs)))
+  (comp (boot-cljs-test/test-cljs)))
 
 (deftask test []
   (testing)
-  (comp (speak) (boot-test/test) (boot-cljs-test/test-cljs)))
+  (comp (boot-test/test) (boot-cljs-test/test-cljs)))
 
 (deftask autotest-clj []
   (testing)
-  (comp (watch) (speak) (boot-test/test)))
+  (comp (watch) (boot-test/test)))
 
 (deftask autotest-cljs []
   (testing)
-  (comp (watch) (speak) (boot-cljs-test/test-cljs)))
+  (comp (watch) (boot-cljs-test/test-cljs)))
 
 (deftask autotest []
   (comp (watch) (test)))
