@@ -1,4 +1,4 @@
-v0.2.0 2016-04-05
+v0.2.0 2016-04-05 1b8e7ba271ffffa0a4bfcc125cd9319a96834afa
 - Added cljs support
 - New Functions: tv-swap, tv-slice, tv-isa?, tv-instance?
 - Converters now catch errors during application
