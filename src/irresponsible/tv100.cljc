@@ -1,4 +1,5 @@
-(ns irresponsible.tv100)
+(ns irresponsible.tv100
+  #?(:clj (:import [java.lang Exception])))
 
 ;; # tv100
 ;;
@@ -106,8 +107,11 @@
    Args: [msg value]
    Returns: never
    Throws: ExceptionInfo"
-  [msg value]
-  (throw (ex-info msg (if (map? value) value {:form value}))))
+  ([msg value]
+   (throw (ex-info msg (if (map? value) value {:form value}))))
+  ([msg value old-e]
+   (throw (ex-info msg (if (map? value) value {:form value
+                                               :old-e old-e})))))
 
 ;; ## Convertors
 
@@ -118,12 +122,12 @@
    Returns: tv-fn"
   [exp-desc c-fn]
   (fn [val]
-    (let [r (try (c-fn val)
-                 (catch #?(:clj java.lang.Exception :cljs js/Object) e
-                   nil))]
-      (if (nil? r)
-        (fail exp-desc val)
-        r))))
+    (try (let [r (c-fn val)]
+           (if (nil? r)
+             (fail exp-desc val)
+             r))
+         (catch #?(:clj Exception :cljs js/Object) e
+           (fail exp-desc val e)))))
 
 (defn pred->tv
   "Turns a predicate into a tv-fn. If it returns truthy, return
@@ -132,11 +136,11 @@
    Returns: tv-fn"
   [exp-desc pred-fn]
   (fn [val]
-    (if (try (pred-fn val)
-             (catch #?(:clj java.lang.Exception :cljs js/Object) e
-               nil))
-      val
-      (fail exp-desc val))))
+    (try (if (pred-fn val)
+           val
+           (fail exp-desc val))
+         (catch #?(:clj Exception :cljs js/Object) e
+           (fail exp-desc val e)))))
 
 ;; This got renamed in v 0.3.0 because i think the old name was confusing
 (def v->tv pred->tv)
