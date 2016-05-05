@@ -18,7 +18,7 @@
       :version (get-env :version)
       :description "Utilities for transforming and validating data"
       :url "https://github.com/irresponsible/tv100"
-      :scm {:url "https://github.com/irresponsible/tv100.git"}
+      :scm {:url "https://github.com/irresponsible/tv100"}
       :license {"MIT" "https://en.wikipedia.org/MIT_License"}}
  ;; marginalia {:dir "doc"
  ;;             :file "index.html"}
