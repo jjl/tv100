@@ -1,6 +1,6 @@
 (set-env!
  :project 'irresponsible/tv100
- :version "0.2.0"
+ :version "0.2.1"
  :source-paths #{"src"}
  :resource-paths #{"src"}
  :dependencies '[[org.clojure/clojure         "1.8.0"          :scope "provided"]
