@@ -31,9 +31,9 @@ build a bunch of other useful modules I'm planning. Hope you like it.
 
 ## Usage
 
-[![Clojars Project](http://clojars.org/irresponsible/tv100/latest-version.svg)](http://clojars.org/irresponsible/tv100)
-
-[![Travis CI](https://travis-ci.org/irresponsible/tv100.svg?branch=master)](https://travis-ci.org/irresponsible/tv100)
+[![Clojars Project](https://img.shields.io/clojars/v/irresponsible/tv100.svg?style=flat-square)](http://clojars.org/irresponsible/tv100)
+[![Travis CI](https://img.shields.io/travis/irresponsible/tv100/master.svg?style=flat-square)](https://travis-ci.org/irresponsible/tv100)
+![Irresponsible](https://img.shields.io/badge/irresponsible-true-red.svg?style=flat-square)
 
 ```clojure
 (ns myapp
