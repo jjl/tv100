@@ -67,7 +67,7 @@ Sorry, just inline at the minute, but they're good quality.
 If you have any issues, please open an issue on github. If you have any patches,
 (including doc patches!), please open a pull request or an issue.
 
-## License
+## Copyright and License
 
 Copyright (c) 2016 James Laver
 
