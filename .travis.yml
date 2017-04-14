@@ -4,6 +4,12 @@ script: ./boot travis
 branches:
   only:
     - master
+before_cache:
+  - rm -rf $HOME/.boot/cache/tmp/
+cache:
+  directories:
+    - $HOME/.m2
+    - $HOME/.boot
 matrix:
   include:
     - env: JDK=zulu8
