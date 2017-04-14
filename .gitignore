@@ -6,8 +6,8 @@ pom.xml.asc
 *.jar
 *.class
 /.lein-*
-/.nrepl-port
-/.nrepl-history
+.nrepl-*
+*~
 /tv100*js
 .#*
 .DS_Store
