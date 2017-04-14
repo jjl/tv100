@@ -5,7 +5,7 @@
  :source-paths #{"src"}
  :resource-paths #{"src"}
  :dependencies '[[org.clojure/clojure         "1.8.0"          :scope "provided"]
-                 [org.clojure/clojurescript   "1.8.40"         :scope "test"]
+                 [org.clojure/clojurescript   "1.9.518"        :scope "test"]
                  [adzerk/boot-cljs            "1.7.228-1"      :scope "test"]
                  [adzerk/boot-test            "1.1.0"          :scope "test"]
                  [crisptrutski/boot-cljs-test "0.2.2-SNAPSHOT" :scope "test"]])
