@@ -3,7 +3,7 @@
  :project 'irresponsible/tv100
  :version "0.2.1"
  :source-paths #{"src"}
- :resource-paths #{"src"}
+ :resource-paths #{"src" "resources"}
  :dependencies '[[org.clojure/clojure         "1.9.0-alpha15"          :scope "provided"]
                  [org.clojure/clojurescript   "1.9.518"        :scope "test"]
                  [adzerk/boot-cljs            "1.7.228-1"      :scope "test"]
