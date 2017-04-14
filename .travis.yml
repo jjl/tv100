@@ -1,19 +1,23 @@
-language: clojure
+language: generic
 sudo: false
 script: ./boot travis
 branches:
   only:
     - master
-    - kentnl
-jdk:
-  - oraclejdk8
-#  - openjdk7 # tests fail - probably running out of memory or disk
-# travis does not support any of these (yet):
-#  - oraclejdk9
-#  - openjdk8
-#  - openjdk9
+matrix:
+  include:
+    - env: JDK=zulu8
+    - env: JDK=zulu9
+  allow_failures:
+    - env: JDK=zulu9
+
+before_install:
+  - curl -fsSLo init.sh http://irresponsible.github.io/tools.travis.jdk-installer/init.sh
+  - source init.sh
+  - install_jdk "${JDK}"
+  - install_boot
+  - setup_boot_env
+  - java -version
 install:
-  - curl -fsSLo boot https://github.com/boot-clj/boot-bin/releases/download/latest/boot.sh
-  - chmod 755 boot
-  - ./boot deps
+  - ./boot travis-installdeps
   - ./boot show -d

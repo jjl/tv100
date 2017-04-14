@@ -1,3 +1,4 @@
+; vim: syntax=clojure
 (set-env!
  :project 'irresponsible/tv100
  :version "0.2.1"
@@ -35,9 +36,7 @@
   (set-env! :resource-paths #(conj % "test"))
   (set-env! :source-paths   #(conj % "test")))
 
-; This is a stub target intended to cause dependency propagation
-; to trigger without actually doing any work
-(deftask deps [])
+
 
 (deftask test-clj []
   (testing)
@@ -68,3 +67,8 @@
 (deftask travis []
   (testing)
   (comp (boot-test/test) (boot-cljs-test/test-cljs)))
+
+; This is a stub target intended to cause dependency propagation
+; to trigger without actually doing any work
+(deftask travis-installdeps []
+  (testing) identity)
